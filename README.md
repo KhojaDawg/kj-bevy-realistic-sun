@@ -3,9 +3,15 @@
 ![Version Badge](https://img.shields.io/badge/Version-0.0.0-orange)
 
 Adds the `DirectionalSunLight` component for use. Attach it to a `DirectionalLight` to control the
-light's orientation realistically using values.
+light's orientation realistically using values like time of day and latitude and watch the sun arc
+across the sky realistically.
 
-Not really intended for "public" use but my friends wanted it
+Note: this isn't astronomically perfect it's just an approximation, but it's an approximation that
+can let you have games where the sun is naturally lower in the sky during the winter, or have
+different maps set at different latitudes, which I think is neat and adds a lot to specific types of
+games basically for free.
+
+Not really intended for "public" use but my friends wanted it so here it is
 
 ## How to Use
 
