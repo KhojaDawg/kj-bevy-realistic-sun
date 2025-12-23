@@ -24,12 +24,6 @@ fn setup_essentials(mut commands: Commands){
         .with_latitude_deg(80.0)
         .with_axial_tilt(Environment::AXIAL_TILT_EARTH);
     commands.insert_resource(environment);
-    // spawn camera
-    commands.spawn((
-        Camera3d::default(),
-        Transform::from_xyz(0.0, 1.7, -10.0)
-            .looking_at(Vec3::new(0.0, 0.5, 0.0), Vec3::Y),
-    ));
     // spawn sun light
     commands.spawn((
         DirectionalLight{
@@ -37,6 +31,12 @@ fn setup_essentials(mut commands: Commands){
             ..default()
         },
         Sun,
+    ));
+    // spawn camera
+    commands.spawn((
+        Camera3d::default(),
+        Transform::from_xyz(0.0, 1.7, -10.0)
+            .looking_at(Vec3::new(0.0, 0.5, 0.0), Vec3::Y),
     ));
 }
 

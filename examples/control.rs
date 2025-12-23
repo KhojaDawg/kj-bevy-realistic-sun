@@ -1,4 +1,10 @@
 use bevy::prelude::*;
+use bevy::{
+    prelude::light_consts::lux,
+    camera::Exposure, core_pipeline::tonemapping::Tonemapping,
+    light::{AtmosphereEnvironmentMapLight, SunDisk},
+    pbr::Atmosphere, post_process::bloom::Bloom, render::view::Hdr,
+};
 use kj_bevy_realistic_sun::*;
 
 
@@ -67,6 +73,13 @@ fn spawn_camera(mut commands: Commands){
         children![(
             Transform::from_xyz(0.0, 1.0, -4.0).looking_at(Vec3::ZERO, Vec3::Y),
             Camera3d::default(),
+            Hdr,
+            Tonemapping::AcesFitted,
+            Exposure::SUNLIGHT,
+            Bloom::NATURAL,
+            Atmosphere::EARTH,
+            AtmosphereEnvironmentMapLight::default(),
+            // Fxaa::default(),
         )],
     ));
 }
@@ -132,9 +145,11 @@ fn spawn_objects(
 fn spawn_sun(mut commands: Commands){
     commands.spawn((
         DirectionalLight{
+            illuminance: lux::DIRECT_SUNLIGHT,
             shadows_enabled: true,
             ..default()
         },
+        SunDisk::EARTH,
         Sun,
     ));
 }
