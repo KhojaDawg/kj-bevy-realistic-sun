@@ -21,7 +21,7 @@ fn main() {
 fn setup_essentials(mut commands: Commands){
     // insert resource
     let environment = Environment::default()
-        .with_latitude_deg(40.0)
+        .with_latitude_deg(80.0)
         .with_axial_tilt(Environment::AXIAL_TILT_EARTH);
     commands.insert_resource(environment);
     // spawn camera
