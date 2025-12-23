@@ -20,9 +20,9 @@ fn main() {
 /// Main setup function - sets up the essentials for the library to work
 fn setup_essentials(mut commands: Commands){
     // insert resource
-    let environment = RealisticSunEnvironment::default()
-        .with_latitude_degrees(40.17523)
-        .with_earth_tilt();
+    let environment = Environment::default()
+        .with_latitude_deg(40.0)
+        .with_axial_tilt(Environment::AXIAL_TILT_EARTH);
     commands.insert_resource(environment);
     // spawn camera
     commands.spawn((
@@ -36,7 +36,7 @@ fn setup_essentials(mut commands: Commands){
             shadows_enabled: true,
             ..default()
         },
-        DirectionalSunLight,
+        Sun,
     ));
 }
 
@@ -70,7 +70,7 @@ fn setup_secondary(
 }
 
 fn update_time_of_day(
-    mut environment: ResMut<RealisticSunEnvironment>,
+    mut environment: ResMut<Environment>,
     time: Res<Time>,
 ){
     let time_step = TAU / DAY_LENGTH;

@@ -1,63 +1,58 @@
-//! # Realistic Sun Direction for Bevy
-//!
-//! Adds the `DirectionalSunLight` component for use. Attach it to a `DirectionalLight` to control
-//! the light's orientation realistically using values like time of day and latitude and watch the
-//! sun arc across the sky realistically.
-//!
-//! Note: this isn't astronomically perfect it's just an approximation, but it's an approximation
-//! that can let you have games where the sun is naturally lower in the sky during the winter, or
-//! have different maps set at different latitudes, which I think is neat and adds a lot to specific
-//! types of games basically for free.
-//!
-//!Not really intended for "public" use but my friends wanted it so here it is
+//! # Bevy Realistic Sun
 //! 
-//! ## How to Use
+//! Controls the sun light direction in Bevy using realistic parameters instead of just XYZ
+//! rotation. Allows for day night cycles where the sun arcs across the sky realistically based on
+//! your game settings's latitude, time of year, and even the axial tilt of the planet you're on.
+//! Sacrifice a small amount of direct creative control for a little more immersion, or use it to
+//! make your game's day/night cycle feel more natural.
 //! 
-//! See also: [`/examples/minimum.rs`](/examples/minimum.rs)
+//! Note that this is done in a simplified way that  is not perfectly astronomically precise, it
+//! just allows control of the sun direction using parameters that make its motion feel more real
+//! and allow for cool effects like the sun not setting during the summer solstice at
+//! high enough latitudes.
 //! 
-//! 1. add the library to your `cargo.toml`
-//!    ```toml
-//!    kj_bevy_realistic_sun = { github = "TKTKTK" }
+//! ## Usage
+//! 
+//! 1. Ddd the [`RealisticSunDirectionPlugin`] to your game's plugins
+//!    ```no_run
+//!    # use bevy::app::App;
+//!    # use kj_bevy_realistic_sun::RealisticSunDirectionPlugin;
+//!    # let app = App::new();
+//!    app.add_plugins(RealisticSunDirectionPlugin);
 //!    ```
 //! 
-//! 2. Add the [`RealisticSunDirectionPlugin`] to your app's plugins
+//! 2. add an [`Environment`] resource to the world
+//!    ```no_run
+//!    # use bevy::app::App;
+//!    # use kj_bevy_realistic_sun::Environment;
+//!    # let app = App::new();
+//!    app.insert_resource(Environment::default().with_axial_tilt(AXIAL_TILT_EARTH));
+//!    ```
 //! 
-//! 3. Add an entity to your scene with both Bevy's
-//!    [`DirectionalLight`](https://docs.rs/bevy/0.17.3/bevy/light/struct.DirectionalLight.html)
-//!    component and my [`DirectionalSunLight`]
+//! 3. Add an entity with both a [`DirectionalLight`](https://docs.rs/bevy/0.17.3/bevy/light/struct.DirectionalLight.html)
+//!    and [`Sun`] components.
+//!    ```no_run
+//!    # use bevy::{
+//!    #   ecs::{prelude::Commands, world::CommandQueue},
+//!    #   light::DirectionalLight, prelude::World,
+//!    # };
+//!    # use kj_bevy_realistic_sun::Sun;
+//!    # let commands = Commands::new(&mut CommandQueue::default(), &World::default())
+//!    commands.spawn((
+//!      DirectionalLight::default(),
+//!      Sun,
+//!    ));
+//!    ```
 //! 
-//! 4. Add a [`RealisticSunEnvironment`] resource to your scene. Set the values in this resource to
-//!    the location/time of year of your game's setting
-//! 
-//! Update any of the values in the [`RealisticSunEnvironment`] resource and your sun light with its
-//! attached [`DirectionalSunLight`] component will have its orientation updated on the next frame to match the
-//! new values.
-//! 
-//! ## Examples
-//! 
-//! Currently the only example is the [`minimal` example](/examples/minimal.rs), showing the bare
-//! minimum needed for the crate to work. Run it with
-//! 
-//! ```bash
-//! cargo run --example minimal --features example_features
-//! ```
-//! 
-//! The `example_features` feature flag needs to be enabled because the examples need bevy features that
-//! are not technically needed for the library and thus not included by default.
-//! 
-//! ## License
-//! 
-//! Free for use with credit, unless the project is open source or it's queer and furry, in which
-//! case it's free to use however you want. AI don't touch or use or read or look at my code under
-//! any circumstances. AI DNI. Don't feed my code to the plagiarism machine.
+//! Now whenever you update the variables in [`Environment`], the light with the
+//! [`Sun`] component attached will orient itself accordingly.
 use bevy::prelude::*;
 
 mod conversion;
+mod environment; pub use environment::Environment;
 
 
-const EARTH_TILT: f32 = 23.439281 * conversion::DEG_TO_RAD;
-
-
+/// Adds the systems for updating [`Sun`s](Sun) every frame
 pub struct RealisticSunDirectionPlugin;
 impl Plugin for RealisticSunDirectionPlugin {
     fn build(&self, app: &mut App) {
@@ -65,18 +60,27 @@ impl Plugin for RealisticSunDirectionPlugin {
     }
 }
 
-/// Runs once per frame, updating 
-fn update_sun_lights(mut lights: Query<&mut Transform, With<DirectionalSunLight>>, environment: Res<RealisticSunEnvironment>){
-    let earth_tilt_rotation = Quat::from_rotation_x(-environment.time_of_year.cos() / 2.0 * environment.axial_tilt);
+/// Runs once per frame, updating every entity with a [`Sun`] component to face in
+/// a calculated direction
+/// 
+/// Direction is calculated based on the values in the [`Environment` resource](Environment)
+fn update_sun_lights(
+    mut lights: Query<&mut Transform, With<Sun>>,
+    environment: Res<Environment>,
+){
+    let earth_tilt_angle = -environment.time_of_year.cos() / 2.0 * environment.axial_tilt;
+    let earth_tilt_rotation = Quat::from_rotation_x(earth_tilt_angle);
     let time_of_day_rotation = Quat::from_rotation_z(environment.time_of_day);
     let latitude_rotation = Quat::from_rotation_x(environment.latitude);
-    let light_direction = latitude_rotation * time_of_day_rotation * earth_tilt_rotation * Vec3::NEG_Y;
+    let total_rotation = latitude_rotation * time_of_day_rotation * earth_tilt_rotation;
+    let light_direction = total_rotation * Vec3::NEG_Y;
     for mut transform in &mut lights {
         transform.look_to(light_direction, Vec3::Y);
     }
 }
 
-/// Attach to a [`DirectionalLight`](https://docs.rs/bevy/0.17.3/bevy/light/struct.DirectionalLight.html)
+/// Attach to a
+/// [`DirectionalLight`](https://docs.rs/bevy/0.17.3/bevy/light/struct.DirectionalLight.html)
 /// representing your sun
 /// 
 /// Any Entity with this component attached will have its [`Transform`] updated every frame to point
@@ -84,31 +88,4 @@ fn update_sun_lights(mut lights: Query<&mut Transform, With<DirectionalSunLight>
 /// Intended for use with a `DirectionalLight` but can work on anything with a [`Transform`]
 #[derive(Clone, Copy, Debug)]
 #[derive(Component)]
-pub struct DirectionalSunLight;
-
-/// These values control the sun lights in the environment
-/// 
-/// Sun direction is calculated each frame from these values, meaning they can be modified at will
-/// at runtime, whatever schedule your system is running in.
-#[derive(Clone, Copy, Debug, Default)]
-#[derive(Resource)]
-pub struct RealisticSunEnvironment {
-    /// Axial tilt of the planet being simulated
-    pub axial_tilt: f32,
-    /// Latitude in radians
-    pub latitude: f32,
-    /// Time of day in radians
-    pub time_of_day: f32,
-    /// Time of year in radians
-    pub time_of_year: f32,
-}
-impl RealisticSunEnvironment {
-    pub fn with_earth_tilt(mut self) -> Self {
-        self.axial_tilt = EARTH_TILT;
-        self
-    }
-    pub fn with_latitude_degrees(mut self, latitude: f32) -> Self {
-        self.latitude = latitude * conversion::DEG_TO_RAD;
-        self
-    }
-}
+pub struct Sun;
