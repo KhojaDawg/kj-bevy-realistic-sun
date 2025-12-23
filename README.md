@@ -19,16 +19,6 @@ Realistic Sun | Bevy
 --------------|-----
 0.0 | 0.17
 
-### List of Examples
-
-Name | Description
------|------------
-`minimal` | Simplest possible demonstration of just the essentials needed to get it to run
-`controllable` | More complex example letting you directly control the `Environment` resource and see how the different values affect the sun
-
-The `dev_features` feature flag needs to be enabled because the examples need bevy features that
-are not technically needed for the library and thus not included by default.
-
 ## Features
 
 The only feature is `dev_features` which is only used for running tests and examples. There should
@@ -40,4 +30,5 @@ feature name every time.
 ## Links
 
 * [**Usage Guide**](/docs/usage.md) how to install and use this library
+* [**Examples**](/examples) examples demonstrating how to use the library
 * [**License**](/docs/license.md) license for using this software/code

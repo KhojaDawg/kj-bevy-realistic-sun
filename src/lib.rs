@@ -11,7 +11,13 @@
 //! allow for cool effects like the sun not setting during the summer solstice at
 //! high enough latitudes.
 //! 
-//! ### Usage
+//! ### Bevy Version Compatability
+//!
+//! Realistic Sun | Bevy
+//! --------------|-----
+//! 0.0 | 0.17
+//! 
+//! ### Basic Usage
 //! 
 //! 1. Add the [`RealisticSunDirectionPlugin`] to your game's plugins
 //!    ```rust,no_run

@@ -19,4 +19,5 @@ The `dev_features` feature flag *must* be enabled in order for examples to run, 
 
 name | description
 -----|------------
-`minimal` | Demonstrates the bare minimum setup needed for the library to work. Renders some primitives on a flat plane with a fast-moving sun controlled by the library to show that it works.
+[`minimal`](minimal.rs) | Demonstrates the bare minimum setup needed for the library to work. Renders some primitives on a flat plane with a fast-moving sun controlled by the library to show that it works.
+[`control`](control.rs) | Complex example with direct control over the `Environment` parameters and a display showing their current values, so you can see how the light behavior changes with different values. Try setting the latitude very close to maximum or minimum and seeing how the sun moves through the sky at different times of year
