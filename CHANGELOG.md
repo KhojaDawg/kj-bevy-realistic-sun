@@ -5,6 +5,17 @@ the changelog
 
 ## Log
 
+### v0.0.2
+
+Fixed some things I missed for v0.0.1, all documentation related
+
+* version badge in README is up to date
+* update [`usage.md`](/docs/usage.md) for version 0.0.2, fix outdated info/links and update version number
+* move license to [`LICENSE.md`](/license.md) in package root
+* add changelog
+* add link to changelog in readme
+
+
 ### v0.0.1
 
 Initial release. Contains barebones tools needed to manage a realistically moving sun with this library.
