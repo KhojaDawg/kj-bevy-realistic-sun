@@ -72,8 +72,10 @@ pub use environment::Environment;
 /// ```no_run
 /// # use bevy::app::App;
 /// # use kj_bevy_realistic_sun::RealisticSunDirectionPlugin;
-/// let app = App::new();
-///     .add_plugins(RealisticSunDirectionPlugin);
+/// fn main() {
+///     let app = App::new()
+///         .add_plugins(RealisticSunDirectionPlugin);
+/// }
 /// ```
 /// 
 /// Adds an [`Environment`] resource with default values, but those values can be overridden by
