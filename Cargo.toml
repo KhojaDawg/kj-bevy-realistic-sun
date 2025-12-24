@@ -9,7 +9,7 @@ homepage = "https://github.com/KhojaDawg/kj-bevy-realistic-sun"
 repository = "https://github.com/KhojaDawg/kj-bevy-realistic-sun"
 keywords = ["bevy", "gamedev", "sun", "simulation", "realism"]
 categories = ["game-development", "simulation"]
-license-file = "docs/license.md"
+license-file = "LICENSE.md"
 
 [dependencies]
 bevy = { version="0.17.0", default-features=false }

@@ -1,35 +1,46 @@
 # Usage Guide
 
-See also: [`/examples/minimum.rs`](/examples/minimum.rs)
+This crate controls the sun light direction in Bevy using realistic parameters instead of just XYZ
+rotation. This allows for day night cycles where the sun arcs across the sky realistically based on
+your game settings's latitude, time of year, and even the axial tilt of the planet you're on.
+Sacrifices a small amount of direct creative control over light direction for a little more
+immersion, or use it to make your game's procedural day/night cycle feel more natural.
 
-1. add the library to your `cargo.toml`
+**Note:** this is done in a simplified way that is not perfectly astronomically precise, it just
+allows control of the sun direction using parameters that make its motion feel more real and allow
+for cool effects like the sun not setting during the summer solstice at high enough latitudes.
+
+### Bevy Version Compatability
+
+Realistic Sun | Bevy
+--------------|-----
+0.0 | 0.17
+
+### Basic Usage
+
+1. Add the [`RealisticSunDirectionPlugin`] to your game's plugins
+   ```rust
+   app.add_plugins(RealisticSunDirectionPlugin);
    ```
-   kj_bevy_realistic_sun = { github = "https://github.com/KhojaDawg/kj-bevy-realistic-sun.git" }
+
+2. add an [`Environment`] resource to the world
+   ```rust
+   let environment = Environment::default()
+       .with_axial_tilt(Environment::AXIAL_TILT_EARTH)
+       .with_latitude_deg(30.0)
+       .with_hours_since_noon(-2.0)
+       .with_date(Environment::DATE_SPRING);
+   app.insert_resource(environment);
    ```
 
-2. Add the `RealisticSunDirectionPlugin` to your app's plugins
+3. Add an entity with both a [`DirectionalLight`](https://docs.rs/bevy/0.17.3/bevy/light/struct.DirectionalLight.html)
+   and [`Sun`] components.
+   ```rust
+   commands.spawn((
+       DirectionalLight::default(),
+       Sun,
+   ));
+   ```
 
-3. Add an entity to your scene with both Bevy's
-   [`DirectionalLight`](https://docs.rs/bevy/0.17.3/bevy/light/struct.DirectionalLight.html)
-   component and the `Sun` component from this library
-
-4. Add an `Environment` resource to your scene. Set the values in this resource to the
-   location/time of year of your game's setting
-
-Update any of the values in the `Environment` resource and your sun light with its
-attached `Sun` component will have its orientation updated on the next frame to
-match the new values.
-
-**Note:** all values in the `Environment` resource are *rotations* not timestamps or
-datetimes or hours or days or anything else like that. The `time_of_day` variable represents how far
-the earth has rotated from local solar noon, not an actual time of day in realistic hours: `0.0`
-will always have the sun at its highest point in the sky and `PI` and `-PI` will always have the sun
-rotated 180 degrees away from that highest point. Similarly, `time_of_year` represents how the axis
-of the planet is rotated with respect to the sun, not an actual date of the year. A value of `0.0`
-will always have the sun follow its highest possible arc across the sky for your given latitude and
-axial tilt, and `PI`/`-PI` will always have the sun follow its lowest possible arc.
-
-This makes it easy to create simple looping values to feed into the environment, or to define your
-own date and time system that can be as simple or as complex as your game needs it to be, then
-normalize those values to a range between `-PI` and `PI` and plug that
-into the `Environment`.
+Now whenever you update the variables in `Environment` from any schedule, the light with the `Sun`
+component attached will orient itself accordingly on the next frame.

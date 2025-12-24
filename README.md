@@ -31,4 +31,5 @@ feature name every time.
 
 * [**Usage Guide**](/docs/usage.md) how to install and use this library
 * [**Examples**](/examples) examples demonstrating how to use the library
-* [**License**](/docs/license.md) license for using this software/code
+* [**Changelog**](/CHANGELOG.md)
+* [**License**](/LICENSE.md) license for using this software/code
