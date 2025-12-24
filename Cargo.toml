@@ -4,11 +4,12 @@ version = "0.0.1"
 authors = ["Khoja :3"]
 description = "Sets a directional light to point in a realistic direction, accounting for latitude and time of year"
 edition = "2024"
-readme = "README.md"
-# homepage = "https://github.com/KhojaDawg/kj-bevy-realistic-sun"
+readme = "/README.md"
+homepage = "https://github.com/KhojaDawg/kj-bevy-realistic-sun"
 repository = "https://github.com/KhojaDawg/kj-bevy-realistic-sun"
 keywords = ["bevy", "gamedev", "sun", "simulation", "realism"]
 categories = ["game-development", "simulation"]
+license-file = "/docs/license.md"
 
 [dependencies]
 bevy = { version="0.17.0", default-features=false }
