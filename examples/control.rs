@@ -254,6 +254,12 @@ fn spawn_objects(
 
 /// Spawns the sun light entity
 fn spawn_sun(mut commands: Commands){
+    commands.insert_resource(
+        Environment::default()
+            .with_axial_tilt(Environment::AXIAL_TILT_EARTH)
+            .with_latitude(Environment::LATITUDE_NEW_JERSEY)
+            .with_hours_since_noon(-2.0)
+    );
     commands.spawn((
         DirectionalLight{
             illuminance: light_consts::lux::DIRECT_SUNLIGHT,
