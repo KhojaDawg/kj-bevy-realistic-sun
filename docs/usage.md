@@ -14,16 +14,23 @@ for cool effects like the sun not setting during the summer solstice at high eno
 
 Realistic Sun | Bevy
 --------------|-----
-0.0 | 0.17
+`0.0.2` | `0.17`
 
 ### Basic Usage
 
-1. Add the [`RealisticSunDirectionPlugin`] to your game's plugins
+1. Add the crate to your project dependencies
+   ```toml
+   [dependencies]
+   kj-bevy-realistic-sun = { version="0.0.2" }
+   ```
+
+2. Add the `RealisticSunDirectionPlugin` to your game's plugins
    ```rust
    app.add_plugins(RealisticSunDirectionPlugin);
    ```
+   This will add the system to the ECS that updates the sun light position when everything else is set up correctly.
 
-2. add an [`Environment`] resource to the world
+3. add an `Environment` resource to the world
    ```rust
    let environment = Environment::default()
        .with_axial_tilt(Environment::AXIAL_TILT_EARTH)
@@ -32,15 +39,17 @@ Realistic Sun | Bevy
        .with_date(Environment::DATE_SPRING);
    app.insert_resource(environment);
    ```
+   modifying or overwriting this resource is how you control the sun light's orientation
 
-3. Add an entity with both a [`DirectionalLight`](https://docs.rs/bevy/0.17.3/bevy/light/struct.DirectionalLight.html)
-   and [`Sun`] components.
+4. Add an entity with both a [`DirectionalLight`](https://docs.rs/bevy/0.17.3/bevy/light/struct.DirectionalLight.html)
+   and `Sun` components.
    ```rust
    commands.spawn((
        DirectionalLight::default(),
        Sun,
    ));
    ```
+   This entity will be controlled by the plugin to point following the sun
 
 Now whenever you update the variables in `Environment` from any schedule, the light with the `Sun`
 component attached will orient itself accordingly on the next frame.
