@@ -9,6 +9,17 @@
 //! Left Arrow  | Rotate camera left
 //! Up Arrow    | Raise camera vertically
 //! Down Arrow  | Lower camera vertically
+//! Q           | Advance time of day
+//! A           | Reverse time of day
+//! W           | Advance time of year
+//! S           | Reverse time of year
+//! E           | Increase latitude
+//! D           | Decrease latitude
+//! R           | Increase axial tilt
+//! F           | Decrease axial tilt
+//! Shift       | Increase speed of environment changes
+//! Ctrl        | Decrease speed of environment changes
+
 use std::f32::consts::{PI, TAU};
 use bevy::prelude::*;
 use bevy::{
@@ -19,7 +30,11 @@ use bevy::{
 use kj_bevy_realistic_sun::*;
 
 /// Speed that values in [`Environment`] change at in radians per second
-const SUN_MOVE_SPEED: f32 = 1.0;
+const SUN_NORMAL_SPEED: f32 = 0.4;
+/// Speed that values in [`Environment`] change when holding the slow button
+const SUN_SLOW_SPEED: f32 = 0.05;
+/// Speed that values in [`Environment`] change when holding the fast button
+const SUN_FAST_SPEED: f32 = 2.0;
 /// Speed the camera turns at
 const CAMERA_TURN_SPEED: f32 = 2.0;
 /// Speed that the camera height changes at
@@ -113,11 +128,16 @@ fn process_sun_input(
     if input.pressed(KeyCode::KeyD){ latitude_input -= 1.0; }
     if input.pressed(KeyCode::KeyR){ axial_tilt_input += 1.0; }
     if input.pressed(KeyCode::KeyF){ axial_tilt_input -= 1.0; }
+    let speed_modifier_pressed: bool = input.pressed(KeyCode::ShiftLeft) || input.pressed(KeyCode::ShiftRight);
+    let slow_modifier_pressed: bool = input.pressed(KeyCode::ControlLeft) || input.pressed(KeyCode::ControlRight);
+    let speed: f32 = if slow_modifier_pressed { SUN_SLOW_SPEED }
+        else if speed_modifier_pressed { SUN_FAST_SPEED }
+        else { SUN_NORMAL_SPEED };
     // apply inputs to `Environment`
-    environment.time_of_day += time_of_day_input * SUN_MOVE_SPEED * delta;
-    environment.time_of_year += time_of_year_input * SUN_MOVE_SPEED * delta;
-    environment.latitude += latitude_input * SUN_MOVE_SPEED * delta;
-    environment.axial_tilt += axial_tilt_input * SUN_MOVE_SPEED * delta;
+    environment.time_of_day += time_of_day_input * speed * delta;
+    environment.time_of_year += time_of_year_input * speed * delta;
+    environment.latitude += latitude_input * speed * delta;
+    environment.axial_tilt += axial_tilt_input * speed * delta;
     // clamp/loop environment values as needed
     if environment.time_of_day > PI { environment.time_of_day -= TAU; }
     if environment.time_of_day < -PI { environment.time_of_day += TAU; }
@@ -287,6 +307,7 @@ fn spawn_ui(mut commands: Commands){
             sun_control_row_bundle("Time of Year: W/S", font.clone(), EnvironmentOutputLabel::TimeOfYear),
             sun_control_row_bundle("Latitude: E/D", font.clone(), EnvironmentOutputLabel::Latitude),
             sun_control_row_bundle("Axial Tilt: R/F", font.clone(), EnvironmentOutputLabel::AxialTilt),
+            (Text::new("Speed/slow sun change input: Shift/Ctrl"), font.clone()),
         ],
     ));
 }
