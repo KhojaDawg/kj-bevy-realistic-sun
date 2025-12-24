@@ -1,6 +1,6 @@
 [package]
 name = "kj-bevy-realistic-sun"
-version = "0.0.2"
+version = "0.0.3"
 authors = ["Khoja :3"]
 description = "Sets a directional light to point in a realistic direction, accounting for latitude and time of year"
 edition = "2024"
