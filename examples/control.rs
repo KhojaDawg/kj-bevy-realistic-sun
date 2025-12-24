@@ -1,6 +1,16 @@
+//! Lets you play with the [`Environment`] variables directly and see their effect on the world and
+//! other Bevy features like the procedural sky
+//! 
+//! ### Controls
+//! 
+//! Key         | Control
+//! ------------|------------------------
+//! Right Arrow | Rotate camera right
+//! Left Arrow  | Rotate camera left
+//! Up Arrow    | Raise camera vertically
+//! Down Arrow  | Lower camera vertically
 use bevy::prelude::*;
 use bevy::{
-    prelude::light_consts::lux,
     camera::Exposure, core_pipeline::tonemapping::Tonemapping,
     light::{AtmosphereEnvironmentMapLight, SunDisk},
     pbr::Atmosphere, post_process::bloom::Bloom, render::view::Hdr,
@@ -20,6 +30,10 @@ const FLOOR_HEIGHT: f32 = -0.6;
 const OBJECT_SIZE: f32 = 0.7;
 /// Spacing between objects
 const OBJECT_SPACING: f32 = 1.0;
+/// Background color for the UI panes
+const UI_BACKGROUND_COLOR: Color = Color::srgba(0.0, 0.0, 0.0, 0.8);
+/// Size of the font in the UI panes
+const UI_FONT_SIZE: f32 = 13.0;
 
 /// Base object that the camera is parented to
 #[derive(Clone, Copy, Debug)]
@@ -30,7 +44,7 @@ struct CameraBase;
 fn main() {
     App::new()
         .add_plugins((DefaultPlugins, RealisticSunDirectionPlugin))
-        .add_systems(Startup, (spawn_camera, spawn_floor, spawn_objects, spawn_sun))
+        .add_systems(Startup, (spawn_camera, spawn_floor, spawn_objects, spawn_sun, spawn_ui))
         .add_systems(Update, (draw_gizmos, process_camera_input))
         .run();
 }
@@ -106,9 +120,9 @@ fn spawn_objects(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>, mut materials: ResMut<Assets<StandardMaterial>>,
 ){
-    let cube_position = Vec3::new(0.0, 0.0, 1.0);
-    let sphere_position = Vec3::new(1.0, 0.0, -1.0);
-    let torus_position = Vec3::new(-1.0, 0.0, -1.0);
+    let cube_position = Vec3::new(0.0, 0.0, -1.0);
+    let sphere_position = Vec3::new(1.0, 0.0, 1.0);
+    let torus_position = Vec3::new(-1.0, 0.0, 1.0);
     let cube_mesh = meshes.add(Cuboid::new(OBJECT_SIZE, OBJECT_SIZE, OBJECT_SIZE));
     let sphere_mesh = meshes.add(Sphere::new(OBJECT_SIZE / 2.0));
     let torus_mesh = meshes.add(Torus::new(OBJECT_SIZE / 4.0, OBJECT_SIZE / 2.0));
@@ -145,11 +159,57 @@ fn spawn_objects(
 fn spawn_sun(mut commands: Commands){
     commands.spawn((
         DirectionalLight{
-            illuminance: lux::DIRECT_SUNLIGHT,
+            illuminance: light_consts::lux::DIRECT_SUNLIGHT,
             shadows_enabled: true,
             ..default()
         },
         SunDisk::EARTH,
         Sun,
+    ));
+}
+
+/// Spawns the UI elements
+fn spawn_ui(mut commands: Commands){
+    let font = TextFont{
+        font_size: UI_FONT_SIZE,
+        ..default()
+    };
+    let padding = UiRect::axes(Val::Px(8.0), Val::Px(5.0));
+    let background_color = BackgroundColor(UI_BACKGROUND_COLOR);
+    // left pane - camera
+    commands.spawn((
+        Node{
+            position_type: PositionType::Absolute,
+            right: Val::Px(0.0),
+            bottom: Val::Px(0.0),
+            flex_direction: FlexDirection::Column,
+            padding,
+            ..default()
+        },
+        background_color.clone(),
+        children![
+            (Text::new("Camera Controls:"), font.clone()),
+            (Text::new("Rotate: Left Arrow/Right Arrow"), font.clone()),
+            (Text::new("Height: Up Arrow/Down Arrow"), font.clone()),
+        ],
+    ));
+    // right pane - sun
+    commands.spawn((
+        Node{
+            position_type: PositionType::Absolute,
+            left: Val::Px(0.0),
+            bottom: Val::Px(0.0),
+            flex_direction: FlexDirection::Column,
+            padding,
+            ..default()
+        },
+        background_color.clone(),
+        children![
+            (Text::new("Sun Controls:"), font.clone()),
+            (Text::new("Time of Day: Q/A"), font.clone()),
+            (Text::new("Time of Year: W/S"), font.clone()),
+            (Text::new("Latitude: E/D"), font.clone()),
+            (Text::new("Axial Tilt: R/F"), font.clone()),
+        ],
     ));
 }
