@@ -123,13 +123,24 @@ fn update_sun_lights(
     mut lights: Query<&mut Transform, With<Sun>>,
     environment: Res<Environment>,
 ){
-    let earth_tilt_angle = -environment.time_of_year.cos() / 2.0 * environment.axial_tilt;
-    let earth_tilt_rotation = Quat::from_rotation_x(earth_tilt_angle);
-    let time_of_day_rotation = Quat::from_rotation_z(environment.time_of_day);
-    let latitude_rotation = Quat::from_rotation_x(environment.latitude);
-    let total_rotation = latitude_rotation * time_of_day_rotation * earth_tilt_rotation;
-    let light_direction = total_rotation * Vec3::NEG_Y;
+    let light_direction = calculate_sun_direction(
+        environment.time_of_day, environment.time_of_year,
+        environment.latitude, environment.axial_tilt
+    );
     for mut transform in &mut lights {
         transform.look_to(light_direction, Vec3::Y);
     }
+}
+
+pub fn calculate_sun_direction(
+    time_of_day: f32, time_of_year: f32,
+    latitude: f32, axial_tilt: f32,
+) -> Vec3 {
+    let earth_tilt_angle = -time_of_year.cos() / 2.0 * axial_tilt;
+    let earth_tilt_rotation = Quat::from_rotation_x(earth_tilt_angle);
+    let time_of_day_rotation = Quat::from_rotation_z(time_of_day);
+    let latitude_rotation = Quat::from_rotation_x(latitude);
+    let total_rotation = latitude_rotation * time_of_day_rotation * earth_tilt_rotation;
+    let light_direction = total_rotation * Vec3::NEG_Y;
+    light_direction
 }
