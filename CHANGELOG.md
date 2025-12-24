@@ -5,7 +5,7 @@ the changelog
 
 ## Log
 
-### v0.0.2
+### 2025-12-23 `v0.0.2`
 
 Fixed some things I missed for v0.0.1, all documentation related
 
@@ -16,7 +16,7 @@ Fixed some things I missed for v0.0.1, all documentation related
 * add link to changelog in readme
 
 
-### v0.0.1
+### 2025-12-23 `v0.0.1`
 
 Initial release. Contains barebones tools needed to manage a realistically moving sun with this library.
 
