@@ -61,7 +61,7 @@
 //! [`Sun`] component attached will orient itself accordingly on the next frame.
 use bevy::prelude::*;
 
-mod conversion;
+pub mod conversion;
 mod environment;
 pub use environment::Environment;
 

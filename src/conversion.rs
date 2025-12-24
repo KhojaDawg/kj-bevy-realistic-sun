@@ -4,8 +4,8 @@ use std::f32::consts::TAU;
 
 pub const DEG_TO_RAD: f32 = TAU / 360.0;
 pub const HOURS_TO_RAD: f32 = TAU / 24.0;
-// pub const RAD_TO_DEG: f32 = 360.0 / TAU;
-// pub const RAD_TO_HOURS: f32 = 24.0 / TAU;
+pub const RAD_TO_DEG: f32 = 360.0 / TAU;
+pub const RAD_TO_HOURS: f32 = 24.0 / TAU;
 
 
 #[cfg(test)]
