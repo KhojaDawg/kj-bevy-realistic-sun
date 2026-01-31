@@ -1,6 +1,6 @@
 # Realistic Sun Direction for Bevy
 
-![Version Badge](https://img.shields.io/badge/Version-0.0.3-orange)
+![Version Badge](https://img.shields.io/badge/Version-0.0.5-orange)
 
 Adds the `Sun` component for use. Attach it to a `DirectionalLight` to control the
 light's orientation realistically using values like time of day and latitude and watch the sun arc
@@ -17,7 +17,7 @@ Not really intended for "public" use but my friends wanted it so here it is
 
 Realistic Sun | Bevy
 --------------|-----
-0.0.4         | 0.18
+0.0.5         | 0.18
 0.0.3         | 0.17
 
 ## Features
