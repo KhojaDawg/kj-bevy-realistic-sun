@@ -25,7 +25,7 @@ use bevy::prelude::*;
 use bevy::{
     camera::Exposure, core_pipeline::tonemapping::Tonemapping,
     light::{AtmosphereEnvironmentMapLight, SunDisk},
-    pbr::Atmosphere, post_process::bloom::Bloom, render::view::Hdr,
+    pbr::{Atmosphere, AtmosphereSettings, ScatteringMedium}, post_process::bloom::Bloom, render::view::Hdr,
 };
 use kj_bevy_realistic_sun::*;
 
@@ -176,7 +176,7 @@ fn update_labels(
     }
 }
 
-fn spawn_camera(mut commands: Commands){
+fn spawn_camera(mut commands: Commands, mut scattering_mediums: ResMut<Assets<ScatteringMedium>>){
     commands.spawn((
         Transform::default(),
         CameraBase,
@@ -188,7 +188,8 @@ fn spawn_camera(mut commands: Commands){
             Tonemapping::AcesFitted,
             Exposure::SUNLIGHT,
             Bloom::NATURAL,
-            Atmosphere::EARTH,
+            Atmosphere::earthlike(scattering_mediums.add(ScatteringMedium::default())),
+            AtmosphereSettings::default(),
             AtmosphereEnvironmentMapLight::default(),
             // Fxaa::default(),
         )],

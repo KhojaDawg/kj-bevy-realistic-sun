@@ -1,6 +1,6 @@
 [package]
 name = "kj-bevy-realistic-sun"
-version = "0.0.3"
+version = "0.0.4"
 authors = ["Khoja :3"]
 description = "Sets a directional light to point in a realistic direction, accounting for latitude and time of year"
 edition = "2024"
@@ -12,7 +12,7 @@ categories = ["game-development", "simulation"]
 license-file = "LICENSE.md"
 
 [dependencies]
-bevy = { version="0.17.0", default-features=false }
+bevy = { version="0.18.0", default-features=false }
 
 [dev-dependencies]
 approx = "0.5.0"
