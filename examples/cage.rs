@@ -149,13 +149,14 @@ fn update_environment_ui(
 
 fn draw_sun(mut gizmos: Gizmos, environment: Res<Environment>){
     // draw sun
-    let direction_to_sun = -calculate_sun_direction(
+    let direction_to_sun: Vec3 = -calculate_sun_direction(
         environment.time_of_day, environment.time_of_year,
         environment.latitude, environment.axial_tilt,
     );
-    let sun_position = direction_to_sun * (GIZMO_DISTANCE + SUN_OFFSET);
-    let sun_rotation = Quat::look_at_rh(Vec3::ZERO, direction_to_sun, Vec3::Y);
-    let sun_gizmo_isometry = Isometry3d::new(sun_position, sun_rotation);
+    let sun_position: Vec3 = direction_to_sun * (GIZMO_DISTANCE + SUN_OFFSET);
+    let sun_transform: Transform = Transform::from_translation(sun_position)
+        .looking_at(Vec3::ZERO, Vec3::Y);
+    let sun_gizmo_isometry: Isometry3d = sun_transform.to_isometry();
     gizmos.circle(sun_gizmo_isometry, SUN_RADIUS, SUN_COLOR);
 }
 
