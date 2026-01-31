@@ -5,6 +5,10 @@ the changelog
 
 ## Log
 
+### 2026-01-31 `v0.0.4`
+
+Upgrade bevy engine version to 0.18
+
 ### 2026-01-31 `v0.0.3`
 
 Added the `cage` example to see the path of the sun graphed in the sky, plus some minor changes. Full list of changes:
