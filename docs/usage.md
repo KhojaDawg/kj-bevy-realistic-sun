@@ -14,7 +14,7 @@ for cool effects like the sun not setting during the summer solstice at high eno
 
 Realistic Sun | Bevy
 --------------|-----
-`0.0.2` | `0.17`
+`0.0.3` | `0.17`
 
 ### Basic Usage
 
