@@ -5,6 +5,15 @@ the changelog
 
 ## Log
 
+### 2026-01-31 `v0.0.3`
+
+Added the `cage` example to see the path of the sun graphed in the sky, plus some minor changes. Full list of changes:
+
+* add `cage` example
+* remove `minimal` example
+* add dates to changelog
+* add explicit types for everything in library (not for examples)
+
 ### 2025-12-23 `v0.0.2`
 
 Fixed some things I missed for v0.0.1, all documentation related
