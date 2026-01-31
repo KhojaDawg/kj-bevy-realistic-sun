@@ -16,14 +16,15 @@ mod tests {
 
     #[test]
     fn deg_to_rad() {
-        let tests = vec![
+        // Vec<(expected, input)>
+        let tests: Vec<(f32, f32)> = vec![
             (0.0, 0.0),
             (PI/2.0, 90.0),
             (PI, 180.0),
             (TAU, 360.0),
         ];
         for (expected, input) in tests {
-            let result = input * DEG_TO_RAD;
+            let result: f32 = input * DEG_TO_RAD;
             assert!(
                 ulps_eq!(result, expected),
                 "Expected {} to convert to {}, but {} was computed", input, expected, result,
