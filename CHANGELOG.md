@@ -5,6 +5,11 @@ the changelog
 
 ## Log
 
+### 2026-06-25 `v0.0.5`
+
+* Upgrade bevy engine version to 0.19
+* Gate example logic behind `dev_features` feature flag. Print message if feature is not enabled
+
 ### 2026-01-31 `v0.0.4`
 
 Upgrade bevy engine version to 0.18
@@ -24,7 +29,7 @@ Fixed some things I missed for v0.0.1, all documentation related
 
 * version badge in README is up to date
 * update [`usage.md`](/docs/usage.md) for version 0.0.2, fix outdated info/links and update version number
-* move license to [`LICENSE.md`](/license.md) in package root
+* move license to [`LICENSE.md`](/LICENSE.md) in package root
 * add changelog
 * add link to changelog in readme
 

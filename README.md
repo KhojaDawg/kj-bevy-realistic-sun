@@ -15,10 +15,11 @@ Not really intended for "public" use but my friends wanted it so here it is
 
 ### Bevy Version Compatability
 
-Realistic Sun | Bevy
---------------|-----
-0.0.5         | 0.18
-0.0.3         | 0.17
+| Realistic Sun | Bevy |
+|--------------:|-----:|
+|         0.0.5 | 0.19 |
+|         0.0.4 | 0.18 |
+|         0.0.3 | 0.17 |
 
 ## Features
 
