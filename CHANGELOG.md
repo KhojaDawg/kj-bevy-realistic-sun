@@ -5,6 +5,11 @@ the changelog
 
 ## Log
 
+### 2026-06-25 `v0.0.5`
+
+* Upgrade bevy engine version to 0.19
+* Gate example logic behind `dev_features` feature flag. Print message if feature is not enabled
+
 ### 2026-01-31 `v0.0.4`
 
 Upgrade bevy engine version to 0.18
