@@ -196,9 +196,9 @@ mod example {
 
     fn draw_axes(mut gizmos: Gizmos) {
         // axes
-        gizmos.circle(Quat::look_to_rh(Vec3::Y, Vec3::Z), GIZMO_DISTANCE, Y_AXIS_COLOR);
-        gizmos.circle(Quat::look_to_rh(Vec3::X, Vec3::Y), GIZMO_DISTANCE, X_AXIS_COLOR);
-        gizmos.circle(Quat::look_to_rh(Vec3::Z, Vec3::Y), GIZMO_DISTANCE, Z_AXIS_COLOR);
+        gizmos.circle(Transform::default().looking_to(Vec3::Y, Vec3::Z).rotation, GIZMO_DISTANCE, Y_AXIS_COLOR);
+        gizmos.circle(Transform::default().looking_to(Vec3::X, Vec3::Y).rotation, GIZMO_DISTANCE, X_AXIS_COLOR);
+        gizmos.circle(Transform::default().looking_to(Vec3::Z, Vec3::Y).rotation, GIZMO_DISTANCE, Z_AXIS_COLOR);
     }
 
     fn spawn_entities(mut commands: Commands) {
