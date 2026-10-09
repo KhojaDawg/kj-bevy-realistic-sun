@@ -327,7 +327,7 @@ impl SunParameters
     }
 
     /// Calculates the [`Vec3`] direction that the sun should be facing
-    pub fn sun_dir(&self) -> Vec3 {
+    pub fn sun_dir(&self) -> Dir3 {
         super::calculate_sun_direction(self.time_of_day, self.time_of_year, self.latitude, self.axial_tilt)
     }
 }

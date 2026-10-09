@@ -164,7 +164,7 @@ mod example {
 
     fn draw_sun(mut gizmos: Gizmos, environment: Res<SunParameters>) {
         // draw sun
-        let direction_to_sun: Vec3 = -environment.sun_dir();
+        let direction_to_sun: Vec3 = -environment.sun_dir().as_vec3();
         let sun_position: Vec3 = direction_to_sun * (GIZMO_DISTANCE + SUN_OFFSET);
         let sun_transform: Transform = Transform::from_translation(sun_position)
             .looking_at(Vec3::ZERO, Vec3::Y);
@@ -179,8 +179,8 @@ mod example {
         for i in 0..SUN_PATH_DAY_RESOLUTION {
             let t_0 = i as f32 * step;
             let t_1 = (i + 1) as f32 * step;
-            let dir_0: Vec3 = -calculate_sun_direction(t_0, environment.time_of_year, environment.latitude, environment.axial_tilt);
-            let dir_1: Vec3 = -calculate_sun_direction(t_1, environment.time_of_year, environment.latitude, environment.axial_tilt);
+            let dir_0: Dir3 = -calculate_sun_direction(t_0, environment.time_of_year, environment.latitude, environment.axial_tilt);
+            let dir_1: Dir3 = -calculate_sun_direction(t_1, environment.time_of_year, environment.latitude, environment.axial_tilt);
             gizmos.line(dir_0 * (GIZMO_DISTANCE + SUN_PATH_OFFSET), dir_1 * (GIZMO_DISTANCE + SUN_PATH_OFFSET), sun_path_color);
         }
         // draw sun year path
@@ -188,8 +188,8 @@ mod example {
         for i in 0..SUN_PATH_YEAR_RESOLUTION {
             let t_0 = i as f32 * step;
             let t_1 = (i + 1) as f32 * step;
-            let dir_0: Vec3 = -calculate_sun_direction(environment.time_of_day, t_0, environment.latitude, environment.axial_tilt);
-            let dir_1: Vec3 = -calculate_sun_direction(environment.time_of_day, t_1, environment.latitude, environment.axial_tilt);
+            let dir_0: Dir3 = -calculate_sun_direction(environment.time_of_day, t_0, environment.latitude, environment.axial_tilt);
+            let dir_1: Dir3 = -calculate_sun_direction(environment.time_of_day, t_1, environment.latitude, environment.axial_tilt);
             gizmos.line(dir_0 * (GIZMO_DISTANCE + SUN_PATH_OFFSET), dir_1 * (GIZMO_DISTANCE + SUN_PATH_OFFSET), sun_path_color);
         }
     }

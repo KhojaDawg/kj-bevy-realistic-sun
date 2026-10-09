@@ -133,12 +133,12 @@ fn update_sun_lights(
 }
 
 /// Calculates the [`Vec3`] direction that the sun should be facing
-pub fn calculate_sun_direction(time_of_day: f32, time_of_year: f32, latitude: f32, axial_tilt: f32) -> Vec3 {
+pub fn calculate_sun_direction(time_of_day: f32, time_of_year: f32, latitude: f32, axial_tilt: f32) -> Dir3 {
     let earth_tilt_angle: f32 = -time_of_year.cos() / 2.0 * axial_tilt;
     let earth_tilt_rotation: Quat = Quat::from_rotation_x(earth_tilt_angle);
     let time_of_day_rotation: Quat = Quat::from_rotation_z(time_of_day);
     let latitude_rotation: Quat = Quat::from_rotation_x(latitude);
     let final_rotation: Quat = latitude_rotation * time_of_day_rotation * earth_tilt_rotation;
-    let light_direction: Vec3 = final_rotation * Vec3::NEG_Y;
+    let light_direction: Dir3 = final_rotation * Dir3::NEG_Y;
     light_direction
 }

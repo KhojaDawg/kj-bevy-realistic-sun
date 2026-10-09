@@ -10,6 +10,7 @@ the changelog
 * Upgrade Bevy engine to version 0.20.0
 * Rename `Sun` to `SunController`
 * Rename `Environment` resource to `SunParams`
+* `calculate_sun_direction` and `SunController::sun_dir` return `Dir3` instead of `Vec3`
 
 ### 2026-06-25 `v0.0.5`
 
