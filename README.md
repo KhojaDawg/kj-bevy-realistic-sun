@@ -17,6 +17,7 @@ Not really intended for "public" use but my friends wanted it so here it is
 
 | Realistic Sun | Bevy |
 |--------------:|-----:|
+|         0.1.0 | 0.20 |
 |         0.0.5 | 0.19 |
 |         0.0.4 | 0.18 |
 |         0.0.3 | 0.17 |

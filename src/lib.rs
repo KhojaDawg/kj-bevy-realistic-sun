@@ -13,10 +13,12 @@
 //! 
 //! ### Bevy Version Compatability
 //!
-//! Realistic Sun | Bevy
-//! --------------|-----
-//! 0.0.5         | 0.18
-//! 0.0.3         | 0.17
+//! | Realistic Sun | Bevy |
+//! |--------------:|-----:|
+//! |         0.1.0 | 0.20 |
+//! |         0.0.5 | 0.19 |
+//! |         0.0.4 | 0.18 |
+//! |         0.0.3 | 0.17 |
 //! 
 //! ### Basic Usage
 //! 
@@ -28,17 +30,17 @@
 //!    app.add_plugins(RealisticSunDirectionPlugin);
 //!    ```
 //! 
-//! 2. add an [`Environment`] resource to the world
+//! 2. add a [`SunParameters`] resource to the world
 //!    ```rust,no_run
 //!    # use bevy::app::App;
-//!    # use kj_bevy_realistic_sun::Environment;
+//!    # use kj_bevy_realistic_sun::SunParameters;
 //!    # let mut app = App::new();
-//!    let environment = Environment::default()
-//!        .with_axial_tilt(Environment::AXIAL_TILT_EARTH)
+//!    let sun_params = SunParameters::default()
+//!        .with_axial_tilt(SunParameters::AXIAL_TILT_EARTH)
 //!        .with_latitude_deg(30.0)
 //!        .with_hours_since_noon(-2.0)
-//!        .with_date(Environment::DATE_SPRING);
-//!    app.insert_resource(environment);
+//!        .with_date(SunParameters::DATE_SPRING);
+//!    app.insert_resource(sun_params);
 //!    ```
 //! 
 //! 3. Add an entity with both a [`DirectionalLight`](https://docs.rs/bevy/0.17.3/bevy/light/struct.DirectionalLight.html)
@@ -53,18 +55,19 @@
 //!    # let world = World::default();
 //!    # let mut commands = Commands::new(&mut command_queue, &world);
 //!    commands.spawn((
-//!        DirectionalLight::default(),
 //!        Sun,
+//!        DirectionalLight::default(),
 //!    ));
 //!    ```
 //! 
-//! Now whenever you update the variables in [`Environment`] from any schedule, the light with the
+//! Now whenever you update the variables in [`SunParameters`] from any schedule, the light with the
 //! [`Sun`] component attached will orient itself accordingly on the next frame.
+
 use bevy::prelude::*;
 
 pub mod conversion;
-mod environment;
-pub use environment::Environment;
+mod params;
+pub use params::SunParameters;
 
 
 /// Adds the systems and resources needed for [`Sun`] components to update their
@@ -79,12 +82,12 @@ pub use environment::Environment;
 /// }
 /// ```
 /// 
-/// Adds an [`Environment`] resource with default values, but those values can be overridden by
-/// just adding your own [`Environment`]
+/// Adds an [`SunParameters`] resource with default values, but those values can be overridden by
+/// just adding your own [`SunParameters`]
 pub struct RealisticSunDirectionPlugin;
 impl Plugin for RealisticSunDirectionPlugin {
     fn build(&self, app: &mut App) {
-        app.insert_resource(Environment::default());
+        app.insert_resource(SunParameters::default());
         app.add_systems(Update, update_sun_lights);
     }
 }
@@ -94,7 +97,7 @@ impl Plugin for RealisticSunDirectionPlugin {
 /// representing your sun
 /// 
 /// Any Entity with this component attached will have its [`Transform`] updated every frame to point
-/// the way the sun would be pointing given the current values in the [`Environment`] resource.
+/// the way the sun would be pointing given the current values in the [`SunParameters`] resource.
 /// Intended for use with a `DirectionalLight` but can work on anything with a [`Transform`]
 /// 
 /// ```no_run
@@ -113,30 +116,24 @@ impl Plugin for RealisticSunDirectionPlugin {
 /// ```
 #[derive(Clone, Copy, Debug)]
 #[derive(Component)]
-#[require(Transform)]
+#[require(Transform, DirectionalLight)]
 pub struct Sun;
 
 /// Runs once per frame, updating every entity with a [`Sun`] component to face in
 /// a calculated direction
 /// 
-/// Direction is calculated based on the values in the [`Environment` resource](Environment)
+/// Direction is calculated based on the values in the [`SunParameters` resource](SunParameters)
 fn update_sun_lights(
     mut lights: Query<&mut Transform, With<Sun>>,
-    environment: Res<Environment>,
+    environment: Res<SunParameters>,
 ){
-    let light_direction: Vec3 = calculate_sun_direction(
-        environment.time_of_day, environment.time_of_year,
-        environment.latitude, environment.axial_tilt
-    );
     for mut transform in &mut lights {
-        transform.look_to(light_direction, Vec3::Y);
+        transform.look_to(environment.sun_dir(), Vec3::Y);
     }
 }
 
-pub fn calculate_sun_direction(
-    time_of_day: f32, time_of_year: f32,
-    latitude: f32, axial_tilt: f32,
-) -> Vec3 {
+/// Calculates the [`Vec3`] direction that the sun should be facing
+pub fn calculate_sun_direction(time_of_day: f32, time_of_year: f32, latitude: f32, axial_tilt: f32) -> Vec3 {
     let earth_tilt_angle: f32 = -time_of_year.cos() / 2.0 * axial_tilt;
     let earth_tilt_rotation: Quat = Quat::from_rotation_x(earth_tilt_angle);
     let time_of_day_rotation: Quat = Quat::from_rotation_z(time_of_day);

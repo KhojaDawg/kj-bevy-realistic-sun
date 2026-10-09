@@ -1,4 +1,4 @@
-//! Lets you play with the [`Environment`] variables directly and see their effect on the world and
+//! Lets you play with the [`SunParameters`] variables directly and see their effect on the world and
 //! other Bevy features like the procedural sky
 //! 
 //! ### Controls
@@ -26,10 +26,10 @@ use bevy::{
     light::{Atmosphere, AtmosphereEnvironmentMapLight, SunDisk, atmosphere::ScatteringMedium},
     pbr::AtmosphereSettings, post_process::bloom::Bloom,
 };
-#[cfg(feature="dev_features")]
-use kj_bevy_realistic_sun::RealisticSunDirectionPlugin;
 
 fn main() {
+    #[cfg(feature="dev_features")]
+    use kj_bevy_realistic_sun::RealisticSunDirectionPlugin;
     #[cfg(feature="dev_features")]
     {
         App::new()
@@ -43,7 +43,7 @@ fn main() {
 #[cfg(feature="dev_features")]
 mod dev_features {
     use std::f32::consts::{PI, TAU};
-    use kj_bevy_realistic_sun::{conversion::*, Environment, Sun};
+    use kj_bevy_realistic_sun::{conversion::*, SunParameters, Sun};
     use super::*;
 
     pub struct ExamplePlugin;
@@ -59,17 +59,19 @@ mod dev_features {
         }
     }
 
-    /// Speed that values in [`Environment`] change at in radians per second
+    /// Speed that values in [`SunParameters`] change at in radians per second
     const SUN_NORMAL_SPEED: f32 = 0.4;
-    /// Speed that values in [`Environment`] change when holding the slow button
+    /// Speed that values in [`SunParameters`] change when holding the slow button
     const SUN_SLOW_SPEED: f32 = 0.05;
-    /// Speed that values in [`Environment`] change when holding the fast button
+    /// Speed that values in [`SunParameters`] change when holding the fast button
     const SUN_FAST_SPEED: f32 = 2.0;
     /// Speed the camera turns at
     const CAMERA_TURN_SPEED: f32 = 2.0;
     /// Speed that the camera height changes at
     const CAMERA_HEIGHT_SPEED: f32 = 2.0;
-    /// Maximum height the camera can raise to (minimum is zero)
+    /// Minimum height the camera can lower to
+    const MIN_CAMERA_HEIGHT: f32 = FLOOR_HEIGHT + 0.05;
+    /// Maximum height the camera can raise
     const MAX_CAMERA_HEIGHT: f32 = 3.0;
     /// Height of floor under objects
     const FLOOR_HEIGHT: f32 = -0.6;
@@ -120,14 +122,14 @@ mod dev_features {
         }
         for mut transform in &mut cameras {
             transform.translation.y += camera_height_input * CAMERA_HEIGHT_SPEED * delta;
-            transform.translation.y = transform.translation.y.clamp(0.0, MAX_CAMERA_HEIGHT);
+            transform.translation.y = transform.translation.y.clamp(MIN_CAMERA_HEIGHT, MAX_CAMERA_HEIGHT);
             transform.look_at(Vec3::ZERO, Vec3::Y);
         }
     }
 
-    /// Takes player input for the sun and updates the [`Environment`] accordingly
+    /// Takes player input for the sun and updates the [`SunParameters`] accordingly
     fn process_sun_input(
-        mut environment: ResMut<Environment>, input: Res<ButtonInput<KeyCode>>, time: Res<Time>,
+        mut environment: ResMut<SunParameters>, input: Res<ButtonInput<KeyCode>>, time: Res<Time>,
     ){
         let delta = time.delta_secs();
         // initialize input variables
@@ -165,7 +167,7 @@ mod dev_features {
 
     /// Updates UI labels marked with [`EnvironmentOutputLabel`]
     fn update_labels(
-        mut labels: Query<(&mut Text, &EnvironmentOutputLabel)>, environment: Res<Environment>
+        mut labels: Query<(&mut Text, &EnvironmentOutputLabel)>, environment: Res<SunParameters>
     ){
         for (mut text, label) in &mut labels {
             text.0 = match label {
@@ -278,9 +280,9 @@ mod dev_features {
     /// Spawns the sun light entity
     fn spawn_sun(mut commands: Commands){
         commands.insert_resource(
-            Environment::default()
-                .with_axial_tilt(Environment::AXIAL_TILT_EARTH)
-                .with_latitude(Environment::LATITUDE_NEW_JERSEY)
+            SunParameters::default()
+                .with_axial_tilt(SunParameters::AXIAL_TILT_EARTH)
+                .with_latitude(SunParameters::LATITUDE_NEW_JERSEY)
                 .with_hours_since_noon(-2.0)
         );
         commands.spawn((

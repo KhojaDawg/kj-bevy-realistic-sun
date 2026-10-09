@@ -5,6 +5,11 @@ the changelog
 
 ## Log
 
+### `v0.1.0`
+
+* Upgrade Bevy engine to version 0.20.0
+* Rename `Environment` resource to `SunParams`
+
 ### 2026-06-25 `v0.0.5`
 
 * Upgrade bevy engine version to 0.19

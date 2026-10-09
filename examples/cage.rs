@@ -99,7 +99,7 @@ mod example {
     }
 
     fn process_environment_input(
-        mut environment: ResMut<Environment>, input: Res<ButtonInput<KeyCode>>, time: Res<Time>,
+        mut environment: ResMut<SunParameters>, input: Res<ButtonInput<KeyCode>>, time: Res<Time>,
     ) {
         let delta = time.delta_secs();
         // initialize input variables
@@ -119,7 +119,7 @@ mod example {
         let speed_modifier_pressed: bool = input.pressed(KeyCode::ShiftLeft) || input.pressed(KeyCode::ShiftRight);
         let slow_modifier_pressed: bool = input.pressed(KeyCode::ControlLeft) || input.pressed(KeyCode::ControlRight);
         let speed: f32 = if slow_modifier_pressed { ENVIRONMENT_SLOW_SPEED } else if speed_modifier_pressed { ENVIRONMENT_FAST_SPEED } else { ENVIRONMENT_NORMAL_SPEED };
-        // apply inputs to `Environment`
+        // apply inputs to `SunParameters`
         environment.time_of_day += time_of_day_input * speed * delta;
         environment.time_of_year += time_of_year_input * speed * delta;
         environment.latitude += latitude_input * speed * delta;
@@ -135,7 +135,7 @@ mod example {
 
     fn update_environment_ui(
         mut text_labels: Query<(&mut Text, &EnvironmentValueText)>,
-        environment: Res<Environment>,
+        environment: Res<SunParameters>,
     ) {
         for (mut text, label) in &mut text_labels {
             text.0 = match label {
@@ -162,12 +162,9 @@ mod example {
         }
     }
 
-    fn draw_sun(mut gizmos: Gizmos, environment: Res<Environment>) {
+    fn draw_sun(mut gizmos: Gizmos, environment: Res<SunParameters>) {
         // draw sun
-        let direction_to_sun: Vec3 = -calculate_sun_direction(
-            environment.time_of_day, environment.time_of_year,
-            environment.latitude, environment.axial_tilt,
-        );
+        let direction_to_sun: Vec3 = -environment.sun_dir();
         let sun_position: Vec3 = direction_to_sun * (GIZMO_DISTANCE + SUN_OFFSET);
         let sun_transform: Transform = Transform::from_translation(sun_position)
             .looking_at(Vec3::ZERO, Vec3::Y);
@@ -175,7 +172,7 @@ mod example {
         gizmos.circle(sun_gizmo_isometry, SUN_RADIUS, SUN_COLOR);
     }
 
-    fn draw_sun_path(mut gizmos: Gizmos, environment: Res<Environment>) {
+    fn draw_sun_path(mut gizmos: Gizmos, environment: Res<SunParameters>) {
         // draw sun day path
         let sun_path_color = SUN_COLOR.with_alpha(SUN_PATH_ALPHA);
         let step = 1.0 / (SUN_PATH_DAY_RESOLUTION as f32) * TAU;
@@ -184,7 +181,7 @@ mod example {
             let t_1 = (i + 1) as f32 * step;
             let dir_0: Vec3 = -calculate_sun_direction(t_0, environment.time_of_year, environment.latitude, environment.axial_tilt);
             let dir_1: Vec3 = -calculate_sun_direction(t_1, environment.time_of_year, environment.latitude, environment.axial_tilt);
-            gizmos.line(dir_0 * GIZMO_DISTANCE, dir_1 * (GIZMO_DISTANCE + SUN_PATH_OFFSET), sun_path_color);
+            gizmos.line(dir_0 * (GIZMO_DISTANCE + SUN_PATH_OFFSET), dir_1 * (GIZMO_DISTANCE + SUN_PATH_OFFSET), sun_path_color);
         }
         // draw sun year path
         let step = 1.0 / (SUN_PATH_YEAR_RESOLUTION as f32) * PI;
@@ -193,7 +190,7 @@ mod example {
             let t_1 = (i + 1) as f32 * step;
             let dir_0: Vec3 = -calculate_sun_direction(environment.time_of_day, t_0, environment.latitude, environment.axial_tilt);
             let dir_1: Vec3 = -calculate_sun_direction(environment.time_of_day, t_1, environment.latitude, environment.axial_tilt);
-            gizmos.line(dir_0 * GIZMO_DISTANCE, dir_1 * (GIZMO_DISTANCE + SUN_PATH_OFFSET), sun_path_color);
+            gizmos.line(dir_0 * (GIZMO_DISTANCE + SUN_PATH_OFFSET), dir_1 * (GIZMO_DISTANCE + SUN_PATH_OFFSET), sun_path_color);
         }
     }
 
@@ -206,9 +203,9 @@ mod example {
 
     fn spawn_entities(mut commands: Commands) {
         commands.insert_resource(
-            Environment::default()
-                .with_axial_tilt(Environment::AXIAL_TILT_EARTH)
-                .with_latitude(Environment::LATITUDE_NEW_JERSEY)
+            SunParameters::default()
+                .with_axial_tilt(SunParameters::AXIAL_TILT_EARTH)
+                .with_latitude(SunParameters::LATITUDE_NEW_JERSEY)
                 .with_date(-1.2)
                 .with_hours_since_noon(-3.0)
         );
