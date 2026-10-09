@@ -8,6 +8,7 @@ the changelog
 ### `v0.1.0`
 
 * Upgrade Bevy engine to version 0.20.0
+* Rename `Sun` to `SunController`
 * Rename `Environment` resource to `SunParams`
 
 ### 2026-06-25 `v0.0.5`
