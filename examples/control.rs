@@ -43,7 +43,7 @@ fn main() {
 #[cfg(feature="dev_features")]
 mod dev_features {
     use std::f32::consts::{PI, TAU};
-    use kj_bevy_realistic_sun::{conversion::*, SunParameters, Sun};
+    use kj_bevy_realistic_sun::{conversion::*, SunParameters, SunController};
     use super::*;
 
     pub struct ExamplePlugin;
@@ -292,7 +292,7 @@ mod dev_features {
                 ..default()
             },
             SunDisk::EARTH,
-            Sun,
+            SunController,
         ));
     }
 

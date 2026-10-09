@@ -6,7 +6,7 @@ use crate::conversion::*;
 
 /// Holds the values that control the light direction
 /// 
-/// To control a light with a [`Sun`](crate::Sun) component, change the values in this resource
+/// To control a light with a [`SunController`](crate::SunController) component, change the values in this resource
 /// instead of changing its Quaternion rotation.
 /// 
 /// ```no_run
@@ -35,7 +35,7 @@ use crate::conversion::*;
 /// 
 /// Sun direction is calculated each frame from these values, meaning they can be modified at
 /// runtime, in any schedule. Once per frame in the [`Update`] schedule, a system will run which
-/// will update all entities with a [`Sun`](crate::Sun) to face where the sun light should face
+/// will update all entities with a [`SunController`](crate::SunController) to face where the sun light should face
 /// with the values here in the sun parameters resource
 /// 
 /// **Note:** all values are stored in *radians*. All functions that manipulate the values will have

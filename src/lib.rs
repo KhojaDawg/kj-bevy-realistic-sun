@@ -44,24 +44,24 @@
 //!    ```
 //! 
 //! 3. Add an entity with both a [`DirectionalLight`](https://docs.rs/bevy/0.17.3/bevy/light/struct.DirectionalLight.html)
-//!    and [`Sun`] components.
+//!    and [`SunController`] components.
 //!    ```rust,no_run
 //!    # use bevy::ecs::prelude::Commands;
 //!    # use bevy::ecs::world::CommandQueue;
 //!    # use bevy::light::DirectionalLight;
 //!    # use bevy::prelude::World;
-//!    # use kj_bevy_realistic_sun::Sun;
+//!    # use kj_bevy_realistic_sun::SunController;
 //!    # let mut command_queue = CommandQueue::default();
 //!    # let world = World::default();
 //!    # let mut commands = Commands::new(&mut command_queue, &world);
 //!    commands.spawn((
-//!        Sun,
+//!        SunController,
 //!        DirectionalLight::default(),
 //!    ));
 //!    ```
 //! 
 //! Now whenever you update the variables in [`SunParameters`] from any schedule, the light with the
-//! [`Sun`] component attached will orient itself accordingly on the next frame.
+//! [`SunController`] component attached will orient itself accordingly on the next frame.
 
 use bevy::prelude::*;
 
@@ -70,7 +70,7 @@ mod params;
 pub use params::SunParameters;
 
 
-/// Adds the systems and resources needed for [`Sun`] components to update their
+/// Adds the systems and resources needed for [`SunController`] components to update their
 /// attached [`Transform`s](Transform)
 /// 
 /// ```no_run
@@ -94,7 +94,7 @@ impl Plugin for RealisticSunDirectionPlugin {
 
 /// Attach to a
 /// [`DirectionalLight`](https://docs.rs/bevy/0.17.3/bevy/light/struct.DirectionalLight.html)
-/// representing your sun
+/// representing your sun to have its direction controlled by this crate
 /// 
 /// Any Entity with this component attached will have its [`Transform`] updated every frame to point
 /// the way the sun would be pointing given the current values in the [`SunParameters`] resource.
@@ -105,26 +105,26 @@ impl Plugin for RealisticSunDirectionPlugin {
 /// # use bevy::ecs::world::CommandQueue;
 /// # use bevy::light::DirectionalLight;
 /// # use bevy::prelude::World;
-/// # use kj_bevy_realistic_sun::Sun;
+/// # use kj_bevy_realistic_sun::SunController;
 /// # let mut command_queue = CommandQueue::default();
 /// # let world = World::default();
 /// # let mut commands = Commands::new(&mut command_queue, &world);
 /// commands.spawn((
 ///     DirectionalLight::default(),
-///     Sun,
+///     SunController,
 /// ));
 /// ```
 #[derive(Clone, Copy, Debug)]
 #[derive(Component)]
 #[require(Transform, DirectionalLight)]
-pub struct Sun;
+pub struct SunController;
 
-/// Runs once per frame, updating every entity with a [`Sun`] component to face in
+/// Runs once per frame, updating every entity with a [`SunController`] component to face in
 /// a calculated direction
 /// 
 /// Direction is calculated based on the values in the [`SunParameters` resource](SunParameters)
 fn update_sun_lights(
-    mut lights: Query<&mut Transform, With<Sun>>,
+    mut lights: Query<&mut Transform, With<SunController>>,
     environment: Res<SunParameters>,
 ){
     for mut transform in &mut lights {
