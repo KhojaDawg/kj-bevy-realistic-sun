@@ -5,7 +5,7 @@ the changelog
 
 ## Log
 
-### `v0.1.0`
+### 2026-10-09 `v0.1.0`
 
 * Upgrade Bevy engine to version 0.20.0
 * Rename `Sun` to `SunController`
